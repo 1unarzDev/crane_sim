@@ -215,7 +215,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ef7efe01df1d13249895c9ac34a41920,
         type: 3}
       propertyPath: m_Name
-      value: separate_parts
+      value: Mini
       objectReference: {fileID: 0}
     - target: {fileID: 1157574197426371454, guid: ef7efe01df1d13249895c9ac34a41920,
         type: 3}
@@ -317,8 +317,8 @@ Rigidbody:
   m_GameObject: {fileID: 861610955}
   serializedVersion: 5
   m_Mass: 500
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
+  m_LinearDamping: 3
+  m_AngularDamping: 3
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -353,7 +353,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &931133919
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -579,7 +579,7 @@ GameObject:
   - component: {fileID: 1425209404}
   - component: {fileID: 1425209406}
   m_Layer: 0
-  m_Name: Directional Light
+  m_Name: Sun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -835,6 +835,11 @@ PrefabInstance:
       propertyPath: m_InnerSpotPercent
       value: -1
       objectReference: {fileID: 0}
+    - target: {fileID: 1520485914674341572, guid: 1a43b4396f07d4dc486a635b18efbc22,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2503313107540010791, guid: 1a43b4396f07d4dc486a635b18efbc22,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -885,10 +890,40 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2755748524486721689, guid: 1a43b4396f07d4dc486a635b18efbc22,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2755748524486721689, guid: 1a43b4396f07d4dc486a635b18efbc22,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.07
+      objectReference: {fileID: 0}
+    - target: {fileID: 2755748524486721689, guid: 1a43b4396f07d4dc486a635b18efbc22,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -4.98
+      objectReference: {fileID: 0}
     - target: {fileID: 2890251079267502793, guid: 1a43b4396f07d4dc486a635b18efbc22,
         type: 3}
       propertyPath: m_Name
       value: WamVPrefab
+      objectReference: {fileID: 0}
+    - target: {fileID: 4763628532308725642, guid: 1a43b4396f07d4dc486a635b18efbc22,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5239215981664146113, guid: 1a43b4396f07d4dc486a635b18efbc22,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5612998404559147340, guid: 1a43b4396f07d4dc486a635b18efbc22,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5851860746337210165, guid: 1a43b4396f07d4dc486a635b18efbc22,
         type: 3}
@@ -905,6 +940,11 @@ PrefabInstance:
       propertyPath: waterSurface
       value: 
       objectReference: {fileID: 1550251302}
+    - target: {fileID: 8786718910907320599, guid: 1a43b4396f07d4dc486a635b18efbc22,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8847020379938146771, guid: 1a43b4396f07d4dc486a635b18efbc22,
         type: 3}
       propertyPath: forceMultiplier
@@ -915,6 +955,60 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1a43b4396f07d4dc486a635b18efbc22, type: 3}
+--- !u!1 &1494666415
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1494666417}
+  - component: {fileID: 1494666416}
+  m_Layer: 0
+  m_Name: ROSConnection
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1494666416
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1494666415}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7acef0b79454c9b4dae3f8139bc4ba77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Robotics.ROSTCPConnector::Unity.Robotics.ROSTCPConnector.ROSConnection
+  m_RosIPAddress: 192.168.1.88
+  m_RosPort: 10000
+  m_ConnectOnStart: 1
+  m_KeepaliveTime: 1
+  m_NetworkTimeoutSeconds: 2
+  m_SleepTimeSeconds: 0.01
+  m_ShowHUD: 0
+  m_TFTopics:
+  - /tf
+  listenForTFMessages: 1
+--- !u!4 &1494666417
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1494666415}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 13.87216, y: 0, z: 10.04746}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1550251301
 GameObject:
   m_ObjectHideFlags: 0
@@ -1129,7 +1223,7 @@ GameObject:
   - component: {fileID: 1737449098}
   - component: {fileID: 1737449097}
   m_Layer: 0
-  m_Name: Mats V3 v4
+  m_Name: Buoys
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1176,8 +1270,8 @@ Rigidbody:
   m_GameObject: {fileID: 1737449096}
   serializedVersion: 5
   m_Mass: 200
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
+  m_LinearDamping: 3
+  m_AngularDamping: 3
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -1298,3 +1392,4 @@ SceneRoots:
   - {fileID: 931133922}
   - {fileID: 1737449103}
   - {fileID: 320482032}
+  - {fileID: 1494666417}
