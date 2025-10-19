@@ -7,30 +7,34 @@ using UnityEngine;
 public class Buoyancy : MonoBehaviour
 {
     public bool buoyancyForceActive = true;
+    public bool useArticulationBody = false;
     private Vector3 buoyancyCenter = new Vector3();
     private Submersion submersion;
     private Rigidbody rigidBody;
-    
-    void Start()
+    private ArticulationBody articulationBody;
+
+    private void Start()
     {
-        rigidBody = GetComponent<Rigidbody>();
+        if (useArticulationBody) articulationBody = GetComponent<ArticulationBody>();
+        else rigidBody = GetComponent<Rigidbody>();
         submersion = GetComponent<Submersion>();
     }
 
-    
-    void FixedUpdate()
+
+    private void FixedUpdate()
     {
         if (!buoyancyForceActive) return;
         ApplyBuoyancyVolume();
     }
 
 
-    private void ApplyBuoyancyVolume() 
+    private void ApplyBuoyancyVolume()
     {
         buoyancyCenter = submersion.submerged.data.centroid;
         float displacedVolume = submersion.submerged.data.volume;
-        float buoyancyForce = Constants.waterDensity*Constants.gravity*displacedVolume;
+        float buoyancyForce = Constants.waterDensity * Constants.gravity * displacedVolume;
         Vector3 forceVector = new Vector3(0f, buoyancyForce, 0f);
-        rigidBody.AddForceAtPosition(forceVector, buoyancyCenter);
+        if (useArticulationBody) articulationBody.AddForceAtPosition(forceVector, buoyancyCenter);
+        else rigidBody.AddForceAtPosition(forceVector, buoyancyCenter);
     }
 }

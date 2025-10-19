@@ -13,24 +13,24 @@ public class Submersion : MonoBehaviour
     [ReadOnly]
     public Submerged submerged;
 
-    [Tooltip("HDRP water surface used for height querying")]
-    public WaterSurface waterSurface = null;
-    [Tooltip("A simplified mesh for physics calculations")]
-    public Mesh simplifiedMesh;
-    [Tooltip("Side length of square water surface approximation patch. Much be large enough to fit entire vessel")]
-    public float patchSize = 10;
-    [Tooltip("Higher number gives a better approximation of water surface")]
-    public int patchResolution = 4;
+    [SerializeField, Tooltip("HDRP water surface used for height querying")]
+    private WaterSurface waterSurface = null;
+    [SerializeField, Tooltip("A simplified mesh for physics calculations")]
+    private Mesh simplifiedMesh;
+    [SerializeField, Tooltip("Side length of square water surface approximation patch. Much be large enough to fit entire vessel")]
+    private float patchSize = 10;
+    [SerializeField, Tooltip("Higher number gives a better approximation of water surface")]
+    private int patchResolution = 4;
 
     private Patch patch;
     //public bool drawWaterLine;
 
-    public bool drawPatch;
-    public bool drawSubmerged;
+    [SerializeField] private bool drawPatch;
+    [SerializeField] private bool drawSubmerged;
     private float displacedVolume;
 
 
-    void Start()
+    private void Start()
     {
         Vector3 gridOrigin = new Vector3(-patchSize / 2, 0, patchSize / 2);
         patch = new Patch(waterSurface, patchSize, patchResolution, gridOrigin);
@@ -39,7 +39,7 @@ public class Submersion : MonoBehaviour
 
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         patch.Update(transform); // updates the patch to follow the boat and queried water height
         submerged.Update(patch, transform);

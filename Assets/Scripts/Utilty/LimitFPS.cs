@@ -1,21 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class LimitFPS : MonoBehaviour
 {
-    public int targetFPS = 60;
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private int targetFPS = 60;
+
+    private void Start()
     {
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = targetFPS;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        if(Application.targetFrameRate != targetFPS)
+        if (Application.targetFrameRate != targetFPS)
             Application.targetFrameRate = targetFPS;
     }
 }

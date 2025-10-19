@@ -1,12 +1,9 @@
 using UnityEngine.Rendering.HighDefinition;
 using System.Collections.Generic;
-using Physics.Water.Dynamics;
-using System.Collections;
 using System.Diagnostics;
 using WaterInteraction;
 using UnityEngine;
 using System.IO;
-using System;
 using TMPro;
 
 
@@ -55,7 +52,7 @@ public class PatchVoxelizedBuoyancy : MonoBehaviour
     private Stopwatch stopwatch = new Stopwatch();
 
 
-    void Awake()
+    private void Awake()
     {
         Vector3ListWrapper wrapper = LoadPoints();
         pointsInsideMesh = wrapper.localPoints;
@@ -217,9 +214,9 @@ public class PatchVoxelizedBuoyancy : MonoBehaviour
     }
 
 
-    void ApplyHydrodynamicDampening()
+    private void ApplyHydrodynamicDampening()
     {
-        //foreach (var point in pointsSubmerged) 
+        //foreach (var point in pointsSubmerged)
         {
             //Vector3 velocity = GetPointVelocity(point); // Implement this method based on your system
             //float area = CalculateCrossSectionalArea(point); // Implement based on voxel size or shape
@@ -271,7 +268,7 @@ public class PatchVoxelizedBuoyancy : MonoBehaviour
         {
             print("Beginning to log volume data");
             Utils.LogDataToFile(depthLogFile, "depth", "volume");
-            // Add a constant downward force 
+            // Add a constant downward force
             GetComponent<Rigidbody>().linearVelocity = new Vector3(0f, -0.1f, 0f);
         }
 

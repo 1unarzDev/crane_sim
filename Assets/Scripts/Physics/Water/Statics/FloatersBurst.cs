@@ -25,9 +25,9 @@ public class FloatersBurst : MonoBehaviour
     NativeArray<int> stepCountBuffer;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        foreach(Transform child in gameObject.transform)
+        foreach (Transform child in gameObject.transform)
         {
             objects.Add(child.gameObject);
         }
@@ -41,11 +41,11 @@ public class FloatersBurst : MonoBehaviour
         projectedPositionWSBuffer = new NativeArray<float3>(numObjects, Allocator.Persistent);
         directionBuffer = new NativeArray<float3>(numObjects, Allocator.Persistent);
         stepCountBuffer = new NativeArray<int>(numObjects, Allocator.Persistent);
-        
+
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (waterSurface == null)
         {

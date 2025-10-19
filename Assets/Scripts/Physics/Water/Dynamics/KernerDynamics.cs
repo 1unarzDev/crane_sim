@@ -19,7 +19,7 @@ public class KernerDynamics : MonoBehaviour
     [Range(0.01f, 5.0f)]
     public float pressureDragVelocityRef = 1.0f;
     [Range(0.1f, 4.0f)]
-    public float pressureDragFalloffPower = 1.0f;    
+    public float pressureDragFalloffPower = 1.0f;
 
     [Range(0.0f, 1000.0f)]
     public float suctionDragLinearCoefficient = 100;
@@ -41,13 +41,13 @@ public class KernerDynamics : MonoBehaviour
     public float hullZMax = 2.9f;
 
 
-    void Start()
+    private void Start()
     {
         rigidBody = GetComponent<Rigidbody>();
         submerged = GetComponent<Submersion>().submerged;
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         rigidBody = GetComponent<Rigidbody>();
         submerged = GetComponent<Submersion>().submerged;
@@ -60,13 +60,13 @@ public class KernerDynamics : MonoBehaviour
             float Cfr = submerged.GetResistanceCoefficient(rigidBody.linearVelocity.magnitude, hullZMin, hullZMax, submerged.data);
             ApplyViscousResistance(Cfr);
         }
-        if (pressureDragActive) 
+        if (pressureDragActive)
         {
-            ApplyPressureDrag(pressureDragLinearCoefficient, 
-                              pressureDragQuadraticCoefficient, 
+            ApplyPressureDrag(pressureDragLinearCoefficient,
+                              pressureDragQuadraticCoefficient,
                               suctionDragLinearCoefficient,
                               suctionDragQuadraticCoefficient,
-                              pressureDragVelocityRef, 
+                              pressureDragVelocityRef,
                               pressureDragFalloffPower,
                               suctionDragFalloffPower);
         }
@@ -80,7 +80,7 @@ public class KernerDynamics : MonoBehaviour
         Vector3 G = rigidBody.position;
         Vector3 n, Ci, GCi, vi, viTan, ufi, vfi, Fvi;
         Transform t = submerged.data.transform;
-        for (int i = 0; i < submerged.data.maxTriangleIndex/3; i++)
+        for (int i = 0; i < submerged.data.maxTriangleIndex / 3; i++)
         {
             n = t.InverseTransformDirection(submerged.data.normals[i]).normalized;
             Ci = submerged.data.faceCentersWorld[i];
@@ -95,14 +95,15 @@ public class KernerDynamics : MonoBehaviour
             }
             vfi = vi.magnitude * ufi;
             Fvi = (0.5f) * density * Cfr * submergedFaceAreas[i] * vfi.magnitude * vfi;
-            rigidBody.AddForceAtPosition(Fvi*viscousForceScale, Ci);
+            rigidBody.AddForceAtPosition(Fvi * viscousForceScale, Ci);
             if (debugResist)
             {
                 Debug.DrawRay(Ci, Fvi, Color.red);
             }
         }
-        if (debugResist) {
-                // Debug.DrawRay(transform.position, totalViscousForce/100, Color.red);
+        if (debugResist)
+        {
+            // Debug.DrawRay(transform.position, totalViscousForce/100, Color.red);
         }
         return;
     }
@@ -120,8 +121,8 @@ public class KernerDynamics : MonoBehaviour
         for (int i = 0; i < submerged.data.maxTriangleIndex - 2; i += 3)
         {
             (v0, v1, v2) = (vertices[triangles[i]], vertices[triangles[i + 1]], vertices[triangles[i + 2]]);
-            ni = t.InverseTransformDirection(submerged.data.normals[i/3]);
-            Ci = t.TransformPoint((v0+v1+v2)/3);
+            ni = t.InverseTransformDirection(submerged.data.normals[i / 3]);
+            Ci = t.TransformPoint((v0 + v1 + v2) / 3);
             Si = (0.5f) * Vector3.Cross((v1 - v0), (v2 - v0)).magnitude;
 
             GCi = Ci - G;

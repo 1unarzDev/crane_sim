@@ -9,17 +9,17 @@ using System;
 using TMPro;
 
 // This script is aimed at testing the buoyancy of a ship using a voxelized mesh
-// It does not support a dynamic water surface, but rather creates a plane 
-// based on input transforms. 
+// It does not support a dynamic water surface, but rather creates a plane
+// based on input transforms.
 
 
 public class PlaneVoxelizedBuoyancy : MonoBehaviour
 {
     [Tooltip("Any GameObject transform can be used here.")]
     public Transform planeTransform;
-    
+
     public TextMeshProUGUI buoyancyText;
-    
+
     public bool logData;
 
     private Plane plane = new Plane(Vector3.up, Vector3.zero);
@@ -36,7 +36,7 @@ public class PlaneVoxelizedBuoyancy : MonoBehaviour
     private Rigidbody shipRigidbody;
 
 
-    void Awake()
+    private void Awake()
     {
         // Populate local list and int with saved information
         Vector3ListWrapper wrapper = LoadPoints();
@@ -53,12 +53,12 @@ public class PlaneVoxelizedBuoyancy : MonoBehaviour
         if (!File.Exists(localPath) && logData)
         {
             print("Beginning to log data");
-            Utils.LogDataToFile(localPath,"depth","volume");
+            Utils.LogDataToFile(localPath, "depth", "volume");
         }
-        if(logData) GetComponent<Rigidbody>().linearVelocity = new Vector3(0f, -0.1f, 0f);
+        if (logData) GetComponent<Rigidbody>().linearVelocity = new Vector3(0f, -0.1f, 0f);
     }
 
-    
+
     private void FixedUpdate()
     {
         UpdateGlobalVoxelPosition();
@@ -81,8 +81,8 @@ public class PlaneVoxelizedBuoyancy : MonoBehaviour
         buoyancyText.text = "Buoyancy Force: " + actualForce.ToString("F2");
 
     }
-    
-    
+
+
     /// Returns the list of points under the Plane.
     private List<Vector3> GetPointsUnderPlane()
     {
@@ -95,8 +95,8 @@ public class PlaneVoxelizedBuoyancy : MonoBehaviour
 
         return pointsUnderPlane;
     }
-    
-    
+
+
     private (Vector3, int) CalculateCenterOfPoints(List<Vector3> points)
     {
         Vector3 sum = Vector3.zero;
@@ -107,21 +107,21 @@ public class PlaneVoxelizedBuoyancy : MonoBehaviour
         return (sum / points.Count, points.Count);
     }
 
-    
+
     private void CalculateAndApplyForce((Vector3 centerOfBuoyancy, int numberOfPoints) data)
     {
         float force = CalculateForce(data.numberOfPoints, voxelVolume);
-        shipRigidbody.AddForceAtPosition(force*Vector3.up, data.centerOfBuoyancy);
+        shipRigidbody.AddForceAtPosition(force * Vector3.up, data.centerOfBuoyancy);
         //Debug.DrawRay(data.centerOfBuoyancy,force*Vector3.up, Color.red);
     }
-    
-    
+
+
     private float CalculateForce(int numberOfPoints, float volume)
     {
         return actualForce = Constants.waterDensity * numberOfPoints * volume * Constants.gravity;
     }
-    
-    
+
+
     private void UpdateGlobalVoxelPosition()
     {
         if (!transform.hasChanged) return;
@@ -133,29 +133,29 @@ public class PlaneVoxelizedBuoyancy : MonoBehaviour
         // Reset the hasChanged flag
         transform.hasChanged = false;
     }
-    
-    
+
+
     private Vector3ListWrapper LoadPoints()
     {
         string json = File.ReadAllText(path + "localPointsData-" + transform.name + ".json");
         return JsonUtility.FromJson<Vector3ListWrapper>(json);
     }
-    
-    
+
+
     private float TestVolume((Vector3 centerOfBuoyancy, int numberOfPoints) data)
     {// Total volume submerged
         return data.numberOfPoints * voxelVolume;
     }
-    
-    
+
+
     private void OnDrawGizmos()
     {
         if (globalVoxelPositions.Count == 0) return;
-        
+
         Gizmos.color = Color.magenta;
         foreach (Vector3 point in globalVoxelPositions)
         {
-            Gizmos.DrawSphere(point, 0.25f*voxelRadius); 
+            Gizmos.DrawSphere(point, 0.25f * voxelRadius);
         }
     }
 }

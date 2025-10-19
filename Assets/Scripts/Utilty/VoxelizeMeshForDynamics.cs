@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System.IO;
 using System.Linq; // Package for saving data to file
-
 
 [ExecuteInEditMode]
 public class VoxelizeMeshForDynamics : MonoBehaviour
@@ -16,8 +14,8 @@ public class VoxelizeMeshForDynamics : MonoBehaviour
     public Mesh boundsTarget;
 
     public float voxelSize = 6;
-    
-    private List<Vector3> pointsInsideMesh = new List<Vector3>();
+
+    private List<Vector3> pointsInsideMesh = new();
     private string path = "Assets/Data/localPointsData.json";
 
 
@@ -42,17 +40,19 @@ public class VoxelizeMeshForDynamics : MonoBehaviour
 
 
         // Calculate starting points for each axis to ensure the middle line goes through the points
-        Vector3 start = new Vector3(
+        Vector3 start = new(
             center.x - Mathf.Floor(extents.x / voxelSize) * voxelSize,
             center.y - Mathf.Floor(extents.y / voxelSize) * voxelSize,
             center.z - Mathf.Floor(extents.z / voxelSize) * voxelSize);
 
         // Loop for each axis starting from the calculated start point and moving outwards
         for (float x = start.x; x <= center.x + extents.x; x += voxelSize)
-        { for (float y = start.y; y <= center.y + extents.y; y += voxelSize)
-            { for (float z = start.z; z <= center.z + extents.z; z += voxelSize)
+        {
+            for (float y = start.y; y <= center.y + extents.y; y += voxelSize)
+            {
+                for (float z = start.z; z <= center.z + extents.z; z += voxelSize)
                 {
-                    Vector3 point = new Vector3(x, y, z);
+                    Vector3 point = new(x, y, z);
                     if (IsInsideMesh(point)) pointsInsideMesh.Add(point);
                     totalPoints++;
                 }
@@ -67,7 +67,7 @@ public class VoxelizeMeshForDynamics : MonoBehaviour
 
     private bool IsInsideMesh(Vector3 point)
     {
-        Ray ray = new Ray(point, boundsTarget.bounds.center - point);
+        Ray ray = new(point, boundsTarget.bounds.center - point);
         Debug.DrawRay(ray.origin, ray.direction * 3, Color.yellow, 2f);
         bool hitDetected = Physics.Raycast(ray, 100f, colliderLayer);
 
@@ -78,7 +78,7 @@ public class VoxelizeMeshForDynamics : MonoBehaviour
 
     private void ConvertPointsToLocalSpaceAndSaveOld() // TODO: Remove this method
     {
-        Vector3ListWrapper wrapper = new Vector3ListWrapper();
+        Vector3ListWrapper wrapper = new();
         wrapper.volume = voxelSize * voxelSize * voxelSize;
 
         foreach (Vector3 point in pointsInsideMesh)
@@ -91,10 +91,10 @@ public class VoxelizeMeshForDynamics : MonoBehaviour
         File.WriteAllText(path, json);
     }
 
-    
+
     private void ConvertPointsToLocalSpaceAndSave(Dictionary<Vector3, List<Vector3>> pointNeighborsDirections)
     {
-        Vector3ListWrapper wrapper = new Vector3ListWrapper();
+        Vector3ListWrapper wrapper = new();
         wrapper.volume = voxelSize * voxelSize * voxelSize;
 
         foreach (KeyValuePair<Vector3, List<Vector3>> kvp in pointNeighborsDirections)
@@ -103,35 +103,35 @@ public class VoxelizeMeshForDynamics : MonoBehaviour
             Vector3 localPoint = transform.InverseTransformPoint(globalPoint);
             int numberOfFaces = kvp.Value.Count;
             // Convert directions to local space. Is this needed? for axis aligned directions?
-            List<Vector3> localDirections = kvp.Value.Select(dir => transform.InverseTransformDirection(dir)).ToList();  
+            List<Vector3> localDirections = kvp.Value.Select(dir => transform.InverseTransformDirection(dir)).ToList();
 
-            PointData pointData = new PointData(localPoint, numberOfFaces, localDirections);
+            PointData pointData = new(localPoint, numberOfFaces, localDirections);
             //wrapper.pointsData.Add(pointData);
         }
 
         string json = JsonUtility.ToJson(wrapper);
         File.WriteAllText(path, json);
     }
-    
-    
+
+
     /// Run over each point inside mesh and determine how many neighbors.
     private Dictionary<Vector3, List<Vector3>> FindFaces()
     {
         Vector3[] directions = new Vector3[]
         {
-            new Vector3(voxelSize, 0, 0), // Right
-            new Vector3(-voxelSize, 0, 0), // Left
-            new Vector3(0, voxelSize, 0), // Up
-            new Vector3(0, -voxelSize, 0), // Down
-            new Vector3(0, 0, voxelSize), // Forward
-            new Vector3(0, 0, -voxelSize) // Backward
+            new(voxelSize, 0, 0), // Right
+            new(-voxelSize, 0, 0), // Left
+            new(0, voxelSize, 0), // Up
+            new(0, -voxelSize, 0), // Down
+            new(0, 0, voxelSize), // Forward
+            new(0, 0, -voxelSize) // Backward
         };
-        
-        Dictionary<Vector3, List<Vector3>> pointNeighborsDirections = new Dictionary<Vector3, List<Vector3>>();
+
+        Dictionary<Vector3, List<Vector3>> pointNeighborsDirections = new();
 
         foreach (Vector3 point in pointsInsideMesh)
         {
-            List<Vector3> neighborDirections = new List<Vector3>();
+            List<Vector3> neighborDirections = new();
 
             foreach (Vector3 direction in directions)
             {
@@ -153,8 +153,8 @@ public class VoxelizeMeshForDynamics : MonoBehaviour
 
         return pointNeighborsDirections;
     }
-    
-    
+
+
     private void OnDrawGizmos()
     {
         if (!boundsTarget) return;
@@ -174,7 +174,7 @@ public class VoxelizeMeshForDynamics : MonoBehaviour
 [System.Serializable]
 public class Vector3ListWrapperDynamics
 {
-    public List<Vector3> localPoints = new List<Vector3>();
+    public List<Vector3> localPoints = new();
     //public List<PointData> pointsData = new List<PointData>();
     public float volume;
 }
@@ -183,7 +183,7 @@ public class Vector3ListWrapperDynamics
 [System.Serializable]
 public class PointData
 {
-    public Vector3 localPoint; 
+    public Vector3 localPoint;
     public int numberOfFaces; // Number of neighboring faces
     public List<Vector3> faceDirections; // Directions of the neighboring faces
 

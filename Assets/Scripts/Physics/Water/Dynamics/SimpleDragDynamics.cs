@@ -24,7 +24,7 @@ public class SimpleDrag : MonoBehaviour
         ApplyDrag();
     }
 
-    void ApplyDrag()
+    private void ApplyDrag()
     {
         // Translational drag
         Vector3 velocity = transform.InverseTransformDirection(rb.linearVelocity);
@@ -48,6 +48,6 @@ public class SimpleDrag : MonoBehaviour
 
     float CalculateDragForAxis(float speed, float linear, float quadratic, float cubic)
     {
-        return linear * speed + quadratic * speed*Math.Abs(speed) + cubic * Mathf.Pow(speed, 3);
+        return linear * speed + quadratic * speed * Math.Abs(speed) + cubic * Mathf.Pow(speed, 3);
     }
 }
