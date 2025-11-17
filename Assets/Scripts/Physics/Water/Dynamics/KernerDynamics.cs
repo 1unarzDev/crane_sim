@@ -4,10 +4,8 @@ using Sim.Physics.Processing;
 using Sim.Physics.Water.Statics;
 using Sim.Utils;
 
-namespace Sim.Physics.Water.Dynamics
-{
-    public class KernerDynamics : MonoBehaviour
-    {
+namespace Sim.Physics.Water.Dynamics {
+    public class KernerDynamics : MonoBehaviour {
 
         public bool viscousResistActive;
         public bool pressureDragActive;
@@ -15,7 +13,7 @@ namespace Sim.Physics.Water.Dynamics
         public bool debugResist;
 
         [Range(0.0f, 5.0f)]
-        public float viscousForceScale = 1f;
+        public float viscousForceScale = 1.0f;
         [Range(0.0f, 1000.0f)]
         public float pressureDragLinearCoefficient = 100;
         [Range(0.0f, 1000.0f)]
@@ -44,40 +42,34 @@ namespace Sim.Physics.Water.Dynamics
         public float hullZMin = -2.5f;
         public float hullZMax = 2.9f;
 
-        void OnValidate()
-        {
+        void OnValidate() {
             if (GetComponent<Rigidbody>() == null && GetComponent<ArticulationBody>() == null)
                 Debug.LogWarning($"{name} should have either a Rigidbody or an ArticulationBody attached.");
         }
 
-        void Awake()
-        {
+        void Awake() {
             var rb = GetComponent<Rigidbody>();
             var ab = GetComponent<ArticulationBody>();
 
             if (rb != null) body = new RigidbodyAdapter(rb);
             else if (ab != null) body = new ArticulationBodyAdapter(ab);
-            else Debug.LogError("No Rigidbody or ArticulationBody found!");
+            else throw new MissingComponentException($"{name} requires a Rigidbody or ArticulationBody!");
         }
 
-        private void Start()
-        {
+        private void Start() {
             submerged = GetComponent<Submersion>().submerged;
         }
 
-        private void FixedUpdate()
-        {
+        private void FixedUpdate() {
             submergedMeshTriangles = submerged.data.triangles;
             submergedMeshVertices = submerged.data.vertices;
             submergedFaceAreas = SubmersionUtils.CalculateTriangleAreas(submerged.data);
 
-            if (viscousResistActive)
-            {
+            if (viscousResistActive) {
                 float Cfr = submerged.GetResistanceCoefficient(body.linearVelocity.magnitude, hullZMin, hullZMax, submerged.data);
                 ApplyViscousResistance(Cfr);
             }
-            if (pressureDragActive)
-            {
+            if (pressureDragActive) {
                 ApplyPressureDrag(pressureDragLinearCoefficient,
                                   pressureDragQuadraticCoefficient,
                                   suctionDragLinearCoefficient,
@@ -89,15 +81,13 @@ namespace Sim.Physics.Water.Dynamics
 
         }
 
-        private void ApplyViscousResistance(float Cfr, float density = Constants.waterDensity)
-        {
+        private void ApplyViscousResistance(float Cfr, float density = Constants.waterDensity) {
             Vector3 vG = body.linearVelocity;
             Vector3 omegaG = body.angularVelocity;
             Vector3 G = body.position;
             Vector3 n, Ci, GCi, vi, viTan, ufi, vfi, Fvi;
             Transform t = submerged.data.transform;
-            for (int i = 0; i < submerged.data.maxTriangleIndex / 3; i++)
-            {
+            for (int i = 0; i < submerged.data.maxTriangleIndex / 3; i++) {
                 n = t.InverseTransformDirection(submerged.data.normals[i]).normalized;
                 Ci = submerged.data.faceCentersWorld[i];
                 GCi = Ci - G;
@@ -105,27 +95,23 @@ namespace Sim.Physics.Water.Dynamics
 
                 viTan = vi - (Vector3.Dot(vi, n)) * n;
                 ufi = -viTan / (viTan.magnitude);
-                if (float.IsNaN(ufi.x))
-                {
+                if (float.IsNaN(ufi.x)) {
                     continue;
                 }
                 vfi = vi.magnitude * ufi;
                 Fvi = (0.5f) * density * Cfr * submergedFaceAreas[i] * vfi.magnitude * vfi;
                 body.AddForceAtPosition(Fvi * viscousForceScale, Ci);
-                if (debugResist)
-                {
+                if (debugResist) {
                     Debug.DrawRay(Ci, Fvi, Color.red);
                 }
             }
-            if (debugResist)
-            {
+            if (debugResist) {
                 // Debug.DrawRay(transform.position, totalViscousForce/100, Color.red);
             }
             return;
         }
 
-        private void ApplyPressureDrag(float Cpd1, float Cpd2, float Csd1, float Csd2, float vRef, float fp, float fd)
-        {
+        private void ApplyPressureDrag(float Cpd1, float Cpd2, float Csd1, float Csd2, float vRef, float fp, float fd) {
             Vector3[] vertices = submergedMeshVertices;
             int[] triangles = submergedMeshTriangles;
             Vector3 vG = body.linearVelocity;
@@ -134,8 +120,7 @@ namespace Sim.Physics.Water.Dynamics
             Vector3 Fpd, v0, v1, v2, ni, Ci, GCi, vi, ui;
             Transform t = submerged.data.transform;
             float Si, cosThetai, viMag;
-            for (int i = 0; i < submerged.data.maxTriangleIndex - 2; i += 3)
-            {
+            for (int i = 0; i < submerged.data.maxTriangleIndex - 2; i += 3) {
                 (v0, v1, v2) = (vertices[triangles[i]], vertices[triangles[i + 1]], vertices[triangles[i + 2]]);
                 ni = t.InverseTransformDirection(submerged.data.normals[i / 3]);
                 Ci = t.TransformPoint((v0 + v1 + v2) / 3);
@@ -147,16 +132,13 @@ namespace Sim.Physics.Water.Dynamics
                 cosThetai = Vector3.Dot(ui, ni);
 
                 viMag = vi.magnitude;
-                if (viMag == 0.0f)
-                {
+                if (viMag == 0.0f) {
                     continue;
                 }
-                if (cosThetai <= 0.0f)
-                {
+                if (cosThetai <= 0.0f) {
                     Fpd = (Cpd1 * (viMag / vRef) + Cpd2 * ((viMag * viMag) / (viMag * viMag))) * Si * Mathf.Pow(Mathf.Abs(cosThetai), fp) * ni;
                 }
-                else
-                {
+                else {
                     Fpd = -(Csd1 * (viMag / vRef) + Csd2 * ((viMag * viMag) / (vRef * vRef))) * Si * Mathf.Pow(cosThetai, fp) * ni;
                 }
                 body.AddForceAtPosition(Fpd, Ci);

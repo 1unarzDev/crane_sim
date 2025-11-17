@@ -4,11 +4,9 @@ using UnityEditor;
 using System.IO;
 using System.Linq; // Package for saving data to file
 
-namespace Sim.Utils
-{
+namespace Sim.Utils {
     [ExecuteInEditMode]
-    public class VoxelizeMeshForDynamics : MonoBehaviour
-    {
+    public class VoxelizeMeshForDynamics : MonoBehaviour {
         [Tooltip("The layer with the colliders. You usually only want the object to voxelize in this layer.")]
         public LayerMask colliderLayer;
 
@@ -24,14 +22,12 @@ namespace Sim.Utils
         /// Voxelize the mesh by evenly distributing a point cloud.
         /// Iterates over these points to determine which are inside.
         /// Saves the points to a file.
-        public void DeterminePoints()
-        {
+        public void DeterminePoints() {
             print("Determining Points");
             pointsInsideMesh.Clear();
             Bounds bounds;
             if (boundsTarget) bounds = boundsTarget.bounds;
-            else
-            {
+            else {
                 print("Error: Bounds target is required");
                 return;
             }
@@ -48,12 +44,9 @@ namespace Sim.Utils
                 center.z - Mathf.Floor(extents.z / voxelSize) * voxelSize);
 
             // Loop for each axis starting from the calculated start point and moving outwards
-            for (float x = start.x; x <= center.x + extents.x; x += voxelSize)
-            {
-                for (float y = start.y; y <= center.y + extents.y; y += voxelSize)
-                {
-                    for (float z = start.z; z <= center.z + extents.z; z += voxelSize)
-                    {
+            for (float x = start.x; x <= center.x + extents.x; x += voxelSize) {
+                for (float y = start.y; y <= center.y + extents.y; y += voxelSize) {
+                    for (float z = start.z; z <= center.z + extents.z; z += voxelSize) {
                         Vector3 point = new(x, y, z);
                         if (IsInsideMesh(point)) pointsInsideMesh.Add(point);
                         totalPoints++;
@@ -67,10 +60,9 @@ namespace Sim.Utils
         }
 
 
-        private bool IsInsideMesh(Vector3 point)
-        {
+        private bool IsInsideMesh(Vector3 point) {
             Ray ray = new(point, boundsTarget.bounds.center - point);
-            Debug.DrawRay(ray.origin, ray.direction * 3, Color.yellow, 2f);
+            Debug.DrawRay(ray.origin, ray.direction * 3, Color.yellow, 2.0f);
             bool hitDetected = Physics.Raycast(ray, 100f, colliderLayer);
 
             if (hitDetected) return false;
@@ -83,8 +75,7 @@ namespace Sim.Utils
             Vector3ListWrapper wrapper = new();
             wrapper.volume = voxelSize * voxelSize * voxelSize;
 
-            foreach (Vector3 point in pointsInsideMesh)
-            {
+            foreach (Vector3 point in pointsInsideMesh) {
                 Vector3 localPoint = transform.InverseTransformPoint(point);
                 //wrapper.localPoints.Add(localPoint);
             }
@@ -94,13 +85,11 @@ namespace Sim.Utils
         }
 
 
-        private void ConvertPointsToLocalSpaceAndSave(Dictionary<Vector3, List<Vector3>> pointNeighborsDirections)
-        {
+        private void ConvertPointsToLocalSpaceAndSave(Dictionary<Vector3, List<Vector3>> pointNeighborsDirections) {
             Vector3ListWrapper wrapper = new();
             wrapper.volume = voxelSize * voxelSize * voxelSize;
 
-            foreach (KeyValuePair<Vector3, List<Vector3>> kvp in pointNeighborsDirections)
-            {
+            foreach (KeyValuePair<Vector3, List<Vector3>> kvp in pointNeighborsDirections) {
                 Vector3 globalPoint = kvp.Key;
                 Vector3 localPoint = transform.InverseTransformPoint(globalPoint);
                 int numberOfFaces = kvp.Value.Count;
@@ -117,8 +106,7 @@ namespace Sim.Utils
 
 
         /// Run over each point inside mesh and determine how many neighbors.
-        private Dictionary<Vector3, List<Vector3>> FindFaces()
-        {
+        private Dictionary<Vector3, List<Vector3>> FindFaces() {
             Vector3[] directions = new Vector3[]
             {
                 new(voxelSize, 0, 0), // Right
@@ -131,24 +119,20 @@ namespace Sim.Utils
 
             Dictionary<Vector3, List<Vector3>> pointNeighborsDirections = new();
 
-            foreach (Vector3 point in pointsInsideMesh)
-            {
+            foreach (Vector3 point in pointsInsideMesh) {
                 List<Vector3> neighborDirections = new();
 
-                foreach (Vector3 direction in directions)
-                {
+                foreach (Vector3 direction in directions) {
                     Vector3 neighbor = point + direction;
                     // Check if the neighbor is inside the mesh
-                    if (IsInsideMesh(neighbor))
-                    {
+                    if (IsInsideMesh(neighbor)) {
                         // Add the direction to the list if the neighbor is inside the mesh
                         neighborDirections.Add(direction);
                     }
                 }
 
                 // Store the directions to neighbors for the current point
-                if (neighborDirections.Count > 0)
-                {
+                if (neighborDirections.Count > 0) {
                     pointNeighborsDirections[point] = neighborDirections;
                 }
             }
@@ -157,16 +141,14 @@ namespace Sim.Utils
         }
 
 
-        private void OnDrawGizmos()
-        {
+        private void OnDrawGizmos() {
             if (!boundsTarget) return;
             Bounds bounds = boundsTarget.bounds;
             Gizmos.color = Color.red;
             Gizmos.DrawWireCube(transform.position, bounds.size);
 
             Gizmos.color = Color.green;
-            foreach (Vector3 point in pointsInsideMesh)
-            {
+            foreach (Vector3 point in pointsInsideMesh) {
                 Gizmos.DrawWireCube(point, Vector3.one * voxelSize);
             }
         }
@@ -174,8 +156,7 @@ namespace Sim.Utils
 
 
     [System.Serializable]
-    public class Vector3ListWrapperDynamics
-    {
+    public class Vector3ListWrapperDynamics {
         public List<Vector3> localPoints = new();
         //public List<PointData> pointsData = new List<PointData>();
         public float volume;
@@ -183,15 +164,13 @@ namespace Sim.Utils
 
 
     [System.Serializable]
-    public class PointData
-    {
+    public class PointData {
         public Vector3 localPoint;
         public int numberOfFaces; // Number of neighboring faces
         public List<Vector3> faceDirections; // Directions of the neighboring faces
 
         // Constructor to easily create a new PointData object
-        public PointData(Vector3 point, int numFaces, List<Vector3> directions)
-        {
+        public PointData(Vector3 point, int numFaces, List<Vector3> directions) {
             localPoint = point;
             numberOfFaces = numFaces;
             faceDirections = directions;

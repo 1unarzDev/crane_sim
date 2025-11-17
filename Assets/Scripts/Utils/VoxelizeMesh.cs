@@ -2,11 +2,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
-namespace Sim.Utils
-{
+namespace Sim.Utils {
     [ExecuteInEditMode]
-    public class VoxelizeMesh : MonoBehaviour
-    {
+    public class VoxelizeMesh : MonoBehaviour {
         [SerializeField, Tooltip("The layer with the colliders. You usually only want the object to voxelize in this layer.")]
         private LayerMask colliderLayer;
 
@@ -22,15 +20,13 @@ namespace Sim.Utils
         /// Voxelize the mesh by evenly distributing a point cloud.
         /// Iterates over these points to determine which are inside.
         /// Saves the points to a file.
-        public void DeterminePoints()
-        {
+        public void DeterminePoints() {
             localPath = path + "localPointsData-" + transform.name + ".json";
             print("Determining Points");
             pointsInsideMesh.Clear();
             Bounds bounds;
             if (boundsTarget) bounds = boundsTarget.bounds;
-            else
-            {
+            else {
                 print("Error: Bounds target is required");
                 return;
             }
@@ -47,12 +43,9 @@ namespace Sim.Utils
                 center.z - Mathf.Floor(extents.z / voxelSize) * voxelSize);
 
             // Loop for each axis starting from the calculated start point and moving outwards
-            for (float x = start.x; x <= center.x + extents.x; x += voxelSize)
-            {
-                for (float y = start.y; y <= center.y + extents.y; y += voxelSize)
-                {
-                    for (float z = start.z; z <= center.z + extents.z; z += voxelSize)
-                    {
+            for (float x = start.x; x <= center.x + extents.x; x += voxelSize) {
+                for (float y = start.y; y <= center.y + extents.y; y += voxelSize) {
+                    for (float z = start.z; z <= center.z + extents.z; z += voxelSize) {
                         Vector3 point = new(x, y, z);
                         if (IsInsideMesh(point)) pointsInsideMesh.Add(point);
                         totalPoints++;
@@ -65,10 +58,9 @@ namespace Sim.Utils
         }
 
 
-        private bool IsInsideMesh(Vector3 point)
-        {
+        private bool IsInsideMesh(Vector3 point) {
             Ray ray = new(point, boundsTarget.bounds.center - point);
-            Debug.DrawRay(ray.origin, ray.direction * 3, Color.yellow, 2f);
+            Debug.DrawRay(ray.origin, ray.direction * 3, Color.yellow, 2.0f);
             bool hitDetected = Physics.Raycast(ray, 100f, colliderLayer);
 
             if (hitDetected) return false;
@@ -76,14 +68,12 @@ namespace Sim.Utils
         }
 
 
-        private void ConvertPointsToLocalSpaceAndSave()
-        {
+        private void ConvertPointsToLocalSpaceAndSave() {
             Vector3ListWrapper wrapper = new();
             wrapper.volume = voxelSize * voxelSize * voxelSize;
             wrapper.radius = voxelSize / 2;
 
-            foreach (Vector3 point in pointsInsideMesh)
-            {
+            foreach (Vector3 point in pointsInsideMesh) {
                 Vector3 localPoint = transform.InverseTransformPoint(point);
                 wrapper.localPoints.Add(localPoint);
             }
@@ -93,16 +83,14 @@ namespace Sim.Utils
         }
 
 
-        private void OnDrawGizmos()
-        {
+        private void OnDrawGizmos() {
             if (!boundsTarget) return;
             Bounds bounds = boundsTarget.bounds;
             Gizmos.color = Color.red;
             Gizmos.DrawWireCube(transform.position, bounds.size);
 
             Gizmos.color = Color.green;
-            foreach (Vector3 point in pointsInsideMesh)
-            {
+            foreach (Vector3 point in pointsInsideMesh) {
                 Gizmos.DrawWireCube(point, Vector3.one * voxelSize);
             }
         }
@@ -110,8 +98,7 @@ namespace Sim.Utils
 
 
     [System.Serializable]
-    public class Vector3ListWrapper
-    {
+    public class Vector3ListWrapper {
         public List<Vector3> localPoints = new();
         //public List<PointData> pointsData = new List<PointData>();
         public float volume;

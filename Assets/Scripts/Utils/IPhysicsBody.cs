@@ -1,9 +1,7 @@
 using UnityEngine;
 
-namespace Sim.Utils
-{
-    public interface IPhysicsBody
-    {
+namespace Sim.Utils {
+    public interface IPhysicsBody {
         Vector3 position { get; set; }
         Quaternion rotation { get; set; }
         Vector3 linearVelocity { get; set; }
@@ -12,6 +10,8 @@ namespace Sim.Utils
         Quaternion inertiaTensorRotation { get; set; }
         Vector3 GetAccumulatedTorque();
         Vector3 GetAccumulatedTorque(float step);
+        float maxLinearVelocity { get; set; }
+        float maxAngularVelocity { get; set; }
 
         void AddForce(Vector3 force, ForceMode mode = ForceMode.Force);
         void AddRelativeForce(Vector3 force, ForceMode mode = ForceMode.Force);

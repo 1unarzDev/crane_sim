@@ -5,10 +5,8 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Rendering.HighDefinition;
 
-namespace Sim.Physics.Water.Statics
-{
-    public class FloatersBurst : MonoBehaviour
-    {
+namespace Sim.Physics.Water.Statics {
+    public class FloatersBurst : MonoBehaviour {
         // Public parameters
         public WaterSurface waterSurface;
 
@@ -27,10 +25,8 @@ namespace Sim.Physics.Water.Statics
         NativeArray<int> stepCountBuffer;
 
         // Start is called before the first frame update
-        private void Start()
-        {
-            foreach (Transform child in gameObject.transform)
-            {
+        private void Start() {
+            foreach (Transform child in gameObject.transform) {
                 objects.Add(child.gameObject);
             }
 
@@ -47,10 +43,8 @@ namespace Sim.Physics.Water.Statics
         }
 
         // Update is called once per frame
-        private void Update()
-        {
-            if (waterSurface == null)
-            {
+        private void Update() {
+            if (waterSurface == null) {
                 Debug.LogWarning("water surface property not set");
                 return;
             }
@@ -93,8 +87,7 @@ namespace Sim.Physics.Water.Statics
                 objects[i].transform.position = projectedPositionWSBuffer[i];
         }
 
-        private void OnDestroy()
-        {
+        private void OnDestroy() {
             targetPositionBuffer.Dispose();
             errorBuffer.Dispose();
             candidatePositionBuffer.Dispose();

@@ -3,10 +3,8 @@ using UnityEngine;
 using Unity.Robotics.ROSTCPConnector.ROSGeometry;
 using Sim.Utils;
 
-namespace Sim.Physics.Water.Dynamics
-{
-    public class FossenDynamics : MonoBehaviour
-    {
+namespace Sim.Physics.Water.Dynamics {
+    public class FossenDynamics : MonoBehaviour {
         public bool Damping = true;
         public bool AddedMass = true;
         public bool Coriolis = true;
@@ -40,24 +38,21 @@ namespace Sim.Physics.Water.Dynamics
 
         private IPhysicsBody body;
 
-        void OnValidate()
-        {
+        void OnValidate() {
             if (GetComponent<Rigidbody>() == null && GetComponent<ArticulationBody>() == null)
                 Debug.LogWarning($"{name} should have either a Rigidbody or an ArticulationBody attached.");
         }
 
-        void Awake()
-        {
+        void Awake() {
             var rb = GetComponent<Rigidbody>();
             var ab = GetComponent<ArticulationBody>();
 
             if (rb != null) body = new RigidbodyAdapter(rb);
             else if (ab != null) body = new ArticulationBodyAdapter(ab);
-            else Debug.LogError("No Rigidbody or ArticulationBody found!");
+            else throw new MissingComponentException($"{name} requires a Rigidbody or ArticulationBody!");
         }
 
-        private void Start()
-        {
+        private void Start() {
             Ma[0, 0] = XdotU;
             Ma[1, 1] = YdotV;
             Ma[2, 2] = ZdotW;
@@ -67,8 +62,7 @@ namespace Sim.Physics.Water.Dynamics
             state = getState();
         }
 
-        private void FixedUpdate()
-        {
+        private void FixedUpdate() {
             state = getState();
             stateDot = getStateDot(state, statePrev, Time.deltaTime);
             Cor = CalculateCoriolisMatrix(state);
@@ -94,8 +88,7 @@ namespace Sim.Physics.Water.Dynamics
             Array.Copy(state, statePrev, nStates);
         }
 
-        private float[] getState()
-        {
+        private float[] getState() {
             float[] eta = state;
             Vector3 worldVelocity = body.linearVelocity;
             Vector3<FLU> localVelocity = transform.InverseTransformDirection(worldVelocity).To<FLU>();
@@ -111,17 +104,14 @@ namespace Sim.Physics.Water.Dynamics
             return eta;
         }
 
-        private float[] getStateDot(float[] currentState, float[] previousState, float dt)
-        {
+        private float[] getStateDot(float[] currentState, float[] previousState, float dt) {
             float[] retStateDot = new float[6];
-            for (var i = 0; i < nStates; i++)
-            {
+            for (var i = 0; i < nStates; i++) {
                 retStateDot[i] = (currentState[i] - previousState[i]) / dt;
             }
             return retStateDot;
         }
-        private float[,] CalculateCoriolisMatrix(float[] eta)
-        {
+        private float[,] CalculateCoriolisMatrix(float[] eta) {
             float[,] C = new float[6, 6];
             C[0, 5] = YdotV * eta[1];
             C[1, 5] = XdotU * eta[0];
@@ -130,8 +120,7 @@ namespace Sim.Physics.Water.Dynamics
             return C;
         }
 
-        private float[,] CalculateDampingMatrix(float[] eta)
-        {
+        private float[,] CalculateDampingMatrix(float[] eta) {
             D[0, 0] = Xu + Xuu * Mathf.Abs(eta[0]);
             D[1, 1] = Yv + Yvv * Mathf.Abs(eta[1]);
             D[2, 2] = Zw + Zww * Mathf.Abs(eta[2]);
@@ -140,25 +129,20 @@ namespace Sim.Physics.Water.Dynamics
             D[5, 5] = Nr + Nrr * Mathf.Abs(eta[5]);
             return D;
         }
-        private (Vector3, Vector3) CalculateDampingForceTorque(float[] eta)
-        {
+        private (Vector3, Vector3) CalculateDampingForceTorque(float[] eta) {
             Vector3 Fd = new Vector3(); // Damping force
             Vector3 Td = new Vector3(); // Damping torque
 
             // Calculating linear damping force
-            for (int i = 0; i < 3; i++)
-            {
-                for (int j = 0; j < 3; j++)
-                {
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
                     Fd[i] += D[i, j] * eta[j];
                 }
             }
 
             // Calculating angular damping torque
-            for (int i = 0; i < 3; i++)
-            {
-                for (int j = 0; j < 3; j++)
-                {
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
                     Td[i] += D[i + 3, j + 3] * eta[j + 3];
                 }
             }
@@ -167,15 +151,12 @@ namespace Sim.Physics.Water.Dynamics
         }
 
 
-        private (Vector3, Vector3) CalculateCoriolisForceTorque(float[,] C, float[] eta)
-        {
+        private (Vector3, Vector3) CalculateCoriolisForceTorque(float[,] C, float[] eta) {
             Vector3 Fc = new Vector3();
             Vector3 Tc = new Vector3();
 
-            for (int i = 0; i < 3; i++)
-            {
-                for (int j = 0; j < 6; j++)
-                {
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 6; j++) {
                     if (j < 3)
                         Fc[i] += C[i, j] * eta[j];
                     else
@@ -186,15 +167,12 @@ namespace Sim.Physics.Water.Dynamics
             return (Fc, Tc);
         }
 
-        private (Vector3, Vector3) CalculateAddedMassForceTorque(float[,] AddedMassMatrix, float[] etaDot)
-        {
+        private (Vector3, Vector3) CalculateAddedMassForceTorque(float[,] AddedMassMatrix, float[] etaDot) {
             Vector3 F = new Vector3();
             Vector3 T = new Vector3();
 
-            for (int i = 0; i < 3; i++)
-            {
-                for (int j = 0; j < 6; j++)
-                {
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 6; j++) {
                     if (j < 3)
                         F[i] += AddedMassMatrix[i, j] * etaDot[j];
                     else

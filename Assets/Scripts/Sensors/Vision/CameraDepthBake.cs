@@ -2,10 +2,8 @@
 using UnityEngine.Rendering.HighDefinition;
 using UnityEngine.Rendering;
 
-namespace Sim.Sensors.Vision
-{
-    class CameraDepthBake : CustomPass
-    {
+namespace Sim.Sensors.Vision {
+    class CameraDepthBake : CustomPass {
         public Camera bakingCamera = null;
         public RenderTexture depthTexture = null;
         public RenderTexture normalTexture = null;
@@ -14,8 +12,7 @@ namespace Sim.Sensors.Vision
 
         protected override bool executeInSceneView => false;
 
-        protected override void Execute(CustomPassContext ctx)
-        {
+        protected override void Execute(CustomPassContext ctx) {
             if (!render || bakingCamera == null) return;
 
             if (depthTexture == null && normalTexture == null && tangentTexture == null) return;

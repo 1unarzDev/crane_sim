@@ -1,13 +1,10 @@
 using UnityEngine;
 
-namespace Sim.Utils
-{
-    public class RigidbodyAdapter : IPhysicsBody
-    {
+namespace Sim.Utils {
+    public class RigidbodyAdapter : IPhysicsBody {
         private Rigidbody rb;
 
-        public RigidbodyAdapter(Rigidbody rb)
-        {
+        public RigidbodyAdapter(Rigidbody rb) {
             this.rb = rb;
         }
 
@@ -21,6 +18,9 @@ namespace Sim.Utils
             => rb.GetAccumulatedTorque(step);
         public Vector3 GetAccumulatedTorque()
             => rb.GetAccumulatedTorque();
+
+        public float maxLinearVelocity { get => rb.maxLinearVelocity; set => rb.maxLinearVelocity = value; }
+        public float maxAngularVelocity { get => rb.maxAngularVelocity; set => rb.maxAngularVelocity = value; }
 
         public void AddForce(Vector3 force, ForceMode mode = ForceMode.Force)
             => rb.AddForce(force, mode);

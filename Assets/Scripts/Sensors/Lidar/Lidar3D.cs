@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using RosMessageTypes.Sensor;
 using Unity.Collections;
 using Unity.Jobs;
-using Unity.Robotics.Core;
+using Sim.Utils.ROS;
 using UnityEngine;
 
-namespace Sim.Sensors.Lidar
-{
-    public class Lidar3D : ROSSensorBase<PointCloud2Msg>
-    {
+namespace Sim.Sensors.Lidar {
+    public class Lidar3D : ROSSensorBase<PointCloud2Msg> {
         [SerializeField, Range(0.1f, 200.0f)] private float maxRange = 100.0f;
         [SerializeField, Range(0, 5000)] private int numHorizontalBeams = 500;
 
@@ -33,34 +31,29 @@ namespace Sim.Sensors.Lidar
         private float[] scanPatternParams;
         private float[] scanPatternParamsPrev;
 
-        protected override void SetSensorDefaults()
-        {
+        protected override void SetSensorDefaults() {
             if (string.IsNullOrEmpty(topicName)) topicName = "points";
             if (string.IsNullOrEmpty(frameId)) frameId = "lidar_link";
             if (Hz == 0.0f) Hz = 10.0f;
         }
 
-        protected override void Start()
-        {
+        protected override void Start() {
             base.Start();
             scanDirVectors = GenerateScanVectors();
             scanPatternParamsPrev = new float[4];
         }
 
-        private void FixedUpdate()
-        {
+        private void FixedUpdate() {
             //dont re-calculate lidar scan vectors if parameters unchanged
             scanPatternParams = new[] { numHorizontalBeams, numVerticalBeams, horizontalFOV, verticalFOV };
-            if (scanPatternParams != scanPatternParamsPrev)
-            {
+            if (scanPatternParams != scanPatternParamsPrev) {
                 scanDirVectors = GenerateScanVectors();
             }
             transformCache = transform;
             UpdatePublish();
         }
 
-        protected override PointCloud2Msg CreateMessage()
-        {
+        protected override PointCloud2Msg CreateSensorMessage() {
             transformScale = transform.lossyScale;
             Vector3[] points = PerformScan(scanDirVectors);
             PointCloud2Msg msg = PointsToPointCloud2(points);
@@ -69,20 +62,17 @@ namespace Sim.Sensors.Lidar
         }
 
 
-        private Vector3[] GenerateScanVectors()
-        {
+        private Vector3[] GenerateScanVectors() {
 
             float fidelityHorizontal = horizontalFOV / numHorizontalBeams;
             float fidelityVertical = verticalFOV / numVerticalBeams;
 
             Vector3[] scanVectors = new Vector3[numHorizontalBeams * numVerticalBeams];
 
-            for (int i = 0; i < numHorizontalBeams; i++)
-            {
+            for (int i = 0; i < numHorizontalBeams; i++) {
                 float hRot = 0.5f * (Mathf.PI - horizontalFOV) + fidelityHorizontal * i;
 
-                for (int j = 0; j < numVerticalBeams; j++)
-                {
+                for (int j = 0; j < numVerticalBeams; j++) {
                     float vRot = 0.5f * (Mathf.PI - verticalFOV) + (fidelityVertical * j);
 
                     float x = Mathf.Sin(vRot) * Mathf.Cos(hRot);
@@ -97,15 +87,13 @@ namespace Sim.Sensors.Lidar
         }
 
 
-        private Vector3[] PerformScan(Vector3[] dirs)
-        {
+        private Vector3[] PerformScan(Vector3[] dirs) {
             int numPoints = dirs.Length;
             Vector3 nanVec = new Vector3(float.NaN, float.NaN, float.NaN);
             var commands = new NativeArray<RaycastCommand>(numPoints, Allocator.TempJob);
             var results = new NativeArray<RaycastHit>(numPoints, Allocator.TempJob);
 
-            for (int i = 0; i < numPoints; i++)
-            {
+            for (int i = 0; i < numPoints; i++) {
                 Vector3 origin = transformCache.position;
                 Vector3 direction = transformCache.rotation * dirs[i];
                 commands[i] = new RaycastCommand(origin, direction, QueryParameters.Default, maxRange);
@@ -115,21 +103,17 @@ namespace Sim.Sensors.Lidar
             handle.Complete();
 
             Vector3[] points = new Vector3[numPoints];
-            for (int i = 0; i < numPoints; i++)
-            {
+            for (int i = 0; i < numPoints; i++) {
                 var hit = results[i];
-                if (hit.collider != null && (transformCache.position - hit.point).sqrMagnitude > minDistance * minDistance)
-                {
+                if (hit.collider != null && (transformCache.position - hit.point).sqrMagnitude > minDistance * minDistance) {
                     Vector3 beam = transformCache.InverseTransformPoint(hit.point);
                     points[i] = beam;
 
-                    if (drawRays)
-                    {
+                    if (drawRays) {
                         Debug.DrawLine(transformCache.position, transform.TransformPoint(beam), Color.red);
                     }
                 }
-                else
-                {
+                else {
                     points[i] = nanVec;
                 }
             }
@@ -139,8 +123,7 @@ namespace Sim.Sensors.Lidar
             return points;
         }
 
-        private PointCloud2Msg PointsToPointCloud2(Vector3[] points)
-        {
+        private PointCloud2Msg PointsToPointCloud2(Vector3[] points) {
             PointCloud2Msg msg = new PointCloud2Msg();
             msg.header = CreateHeader();
 
@@ -164,8 +147,7 @@ namespace Sim.Sensors.Lidar
 
             // finally, populate the data field, containing the actual points in bytes
             List<byte> dataList = new List<byte>();
-            foreach (Vector3 point in points)
-            {
+            foreach (Vector3 point in points) {
                 dataList.AddRange(BitConverter.GetBytes(point.z * transformScale.z));
                 dataList.AddRange(BitConverter.GetBytes(-point.x * transformScale.x));
                 dataList.AddRange(BitConverter.GetBytes(point.y * transformScale.y));

@@ -16,5 +16,6 @@ dotnet_naming_rule.interface_should_be_prefixed_with_i.style = pascal_case_with_
 
 csharp_style_namespace_declaration = block_scoped:true
 csharp_style_using_directive_placement = outside_namespace:true
+csharp_new_line_before_open_brace = none
 dotnet_diagnostic.IDE0130.severity = none
 file_header_template = namespace Sim.$FilePath$

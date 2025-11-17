@@ -189,7 +189,6 @@ GameObject:
   - component: {fileID: 6565400866058723284}
   - component: {fileID: 7687212814015697926}
   - component: {fileID: 6410587483100875244}
-  - component: {fileID: 284377712777101731}
   m_Layer: 0
   m_Name: WamVPrefab
   m_TagString: Untagged
@@ -353,32 +352,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buoyancyForceActive: 1
---- !u!114 &284377712777101731
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2890251079267502793}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e61530b3acc0db14caa17a0ea97cdf80, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: PhysicsAssembly::KernerDynamics
-  viscousResistActive: 1
-  pressureDragActive: 1
-  debugPressureDrag: 0
-  debugResist: 0
-  viscousForceScale: 1
-  pressureDragLinearCoefficient: 100
-  pressureDragQuadraticCoefficient: 30
-  pressureDragVelocityRef: 1
-  pressureDragFalloffPower: 1
-  suctionDragLinearCoefficient: 100
-  suctionDragQuadraticCoefficient: 30
-  suctionDragFalloffPower: 1
-  hullZMin: -2.5
-  hullZMax: 2.9
 --- !u!1 &4763628532308725642
 GameObject:
   m_ObjectHideFlags: 0

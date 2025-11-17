@@ -3,10 +3,8 @@ using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
 
-namespace Sim.Sensors.Lidar
-{
-    public class Lidar2D : ROSSensorBase<LaserScanMsg>
-    {
+namespace Sim.Sensors.Lidar {
+    public class Lidar2D : ROSSensorBase<LaserScanMsg> {
         [SerializeField] private float minAngleDegrees = -45.0f;
         [SerializeField] private float maxAngleDegrees = 45.0f;
         [SerializeField] private float angleIncrementDegrees = 1.0f;
@@ -17,42 +15,36 @@ namespace Sim.Sensors.Lidar
         // private Vector3 transformScale;
         private Vector3[] scanDirVectors;
 
-        protected override void SetSensorDefaults()
-        {
+        protected override void SetSensorDefaults() {
             if (string.IsNullOrEmpty(topicName)) topicName = "scan";
             if (string.IsNullOrEmpty(frameId)) frameId = "lidar_link";
             if (Hz == 0.0f) Hz = 5.0f;
         }
 
-        protected override void Start()
-        {
+        protected override void Start() {
             base.Start();
             scanDirVectors = GenerateScanVectors();
         }
 
-        protected override LaserScanMsg CreateMessage()
-        {
+        protected override LaserScanMsg CreateSensorMessage() {
             // transformScale = transform.lossyScale;
             scanDirVectors = GenerateScanVectors();
             float[] dists = PerformScan(scanDirVectors);
             return DistancesToLaserscan(dists);
         }
 
-        private void FixedUpdate()
-        {
+        private void FixedUpdate() {
             UpdatePublish();
         }
 
 
-        private Vector3[] GenerateScanVectors()
-        {
+        private Vector3[] GenerateScanVectors() {
             int numBeams = (int)((maxAngleDegrees - minAngleDegrees) / (angleIncrementDegrees));
             Debug.Assert(numBeams >= 0, "Number of beams is negative. Check min/max angle and angle increment.");
             Vector3[] scanVectors = new Vector3[numBeams];
             float minAngleRad = Mathf.Deg2Rad * minAngleDegrees;
             float angleIncrementRad = Mathf.Deg2Rad * angleIncrementDegrees;
-            for (int i = 0; i < numBeams; i++)
-            {
+            for (int i = 0; i < numBeams; i++) {
                 float hRot = minAngleRad + angleIncrementRad * i;
                 float x = -Mathf.Sin(hRot);
                 float y = 0;
@@ -63,14 +55,12 @@ namespace Sim.Sensors.Lidar
         }
 
 
-        private float[] PerformScan(Vector3[] dirs)
-        {
+        private float[] PerformScan(Vector3[] dirs) {
             int numPoints = dirs.Length;
             var commands = new NativeArray<RaycastCommand>(numPoints, Allocator.TempJob);
             var results = new NativeArray<RaycastHit>(numPoints, Allocator.TempJob);
 
-            for (int i = 0; i < numPoints; i++)
-            {
+            for (int i = 0; i < numPoints; i++) {
                 Vector3 origin = transform.position;
                 Vector3 direction = transform.rotation * dirs[i];
                 commands[i] = new RaycastCommand(origin, direction, QueryParameters.Default, maxRange);
@@ -80,20 +70,16 @@ namespace Sim.Sensors.Lidar
             handle.Complete();
 
             float[] dists = new float[numPoints + 1];
-            for (int i = 0; i < numPoints; i++)
-            {
+            for (int i = 0; i < numPoints; i++) {
                 var hit = results[i];
-                if (hit.collider != null && (transform.position - hit.point).sqrMagnitude > minRange * minRange)
-                {
+                if (hit.collider != null && (transform.position - hit.point).sqrMagnitude > minRange * minRange) {
                     Vector3 beam = transform.InverseTransformPoint(hit.point);
                     dists[i] = hit.distance;
-                    if (drawRays)
-                    {
+                    if (drawRays) {
                         Debug.DrawLine(transform.position, transform.TransformPoint(beam), Color.red);
                     }
                 }
-                else
-                {
+                else {
                     dists[i] = float.NaN;
                 }
             }
@@ -103,16 +89,14 @@ namespace Sim.Sensors.Lidar
             return dists;
         }
 
-        private LaserScanMsg DistancesToLaserscan(float[] dists)
-        {
-            LaserScanMsg msg = new()
-            {
+        private LaserScanMsg DistancesToLaserscan(float[] dists) {
+            LaserScanMsg msg = new() {
                 header = CreateHeader(),
 
                 angle_min = minAngleDegrees * Mathf.Deg2Rad,
                 angle_max = maxAngleDegrees * Mathf.Deg2Rad,
                 angle_increment = angleIncrementDegrees * Mathf.Deg2Rad,
-                scan_time = 1f / Hz,
+                scan_time = 1.0f / Hz,
                 range_min = minRange,
                 range_max = maxRange,
                 ranges = dists

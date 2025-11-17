@@ -1,15 +1,13 @@
 using UnityEngine;
 
-namespace Sim.Sensors.Vision
-{
-    public enum SensorEnum
-    {
+namespace Sim.Sensors.Vision {
+    public enum SensorEnum {
         RGB,
         Depth
     }
 
-    public class ProcessRenderTexture : MonoBehaviour
-    {
+    [RequireComponent(typeof(Camera))]
+    public class ProcessRenderTexture : MonoBehaviour {
         [SerializeField] private SensorEnum sensorType;
         [SerializeField] private RenderTexture inputRenderTexture;
         [SerializeField] private RenderTexture normalsRenderTexture;
@@ -28,28 +26,22 @@ namespace Sim.Sensors.Vision
         private Vector3[] frustumCorners = new Vector3[4];
         private Vector3[] normCorners = new Vector3[4];
 
-        private void Start()
-        {
-            if (sensorType == SensorEnum.Depth)
-            {
+        private void Start() {
+            if (sensorType == SensorEnum.Depth) {
                 mat = new Material(Shader.Find("Unlit/NoiseDistortDepth"));
                 cam = GetComponent<Camera>();
             }
-            else if (sensorType == SensorEnum.RGB)
-            {
+            else if (sensorType == SensorEnum.RGB) {
                 mat = new Material(Shader.Find("Unlit/NoiseDistortRGB"));
             }
         }
 
-        private void Update()
-        {
-            if (sensorType == SensorEnum.Depth)
-            {
+        private void Update() {
+            if (sensorType == SensorEnum.Depth) {
                 mat.SetTexture("_NormalsTex", normalsRenderTexture);
                 cam.CalculateFrustumCorners(new Rect(0, 0, 1, 1), cam.farClipPlane, Camera.MonoOrStereoscopicEye.Mono, frustumCorners);
 
-                for (int i = 0; i < 4; i++)
-                {
+                for (int i = 0; i < 4; i++) {
                     normCorners[i] = cam.transform.TransformVector(frustumCorners[i]);
                     normCorners[i] = normCorners[i].normalized;
                     if (drawFrustum)

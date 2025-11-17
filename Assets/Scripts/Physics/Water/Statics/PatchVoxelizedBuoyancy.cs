@@ -14,10 +14,8 @@ using Sim.Physics.Processing;
 // TODO: Consider factoring in Depth of the point to buoyancy force
 // TODO: Find Voxels at waterline, i.e. height is less than radius +- above the water
 
-namespace Sim.Physics.Water.Statics
-{
-    public class PatchVoxelizedBuoyancy : MonoBehaviour
-    {
+namespace Sim.Physics.Water.Statics {
+    public class PatchVoxelizedBuoyancy : MonoBehaviour {
         public TextMeshProUGUI buoyancyText;
 
         // Water querying variables
@@ -54,8 +52,7 @@ namespace Sim.Physics.Water.Statics
         private Stopwatch stopwatch = new();
 
 
-        private void Awake()
-        {
+        private void Awake() {
             Vector3ListWrapper wrapper = LoadPoints();
             pointsInsideMesh = wrapper.localPoints;
             voxelVolume = wrapper.volume;
@@ -64,8 +61,7 @@ namespace Sim.Physics.Water.Statics
         }
 
 
-        private void Start()
-        {
+        private void Start() {
             if (patchSize == 0) return;
 
             Vector3 gridOrigin = new Vector3(-patchSize / 2, 0, patchSize / 2);
@@ -78,8 +74,7 @@ namespace Sim.Physics.Water.Statics
         }
 
 
-        private void FixedUpdate()
-        {
+        private void FixedUpdate() {
             if (patchSize == 0) return;
             stopwatch.Start();
 
@@ -90,8 +85,7 @@ namespace Sim.Physics.Water.Statics
 
             stopwatch.Stop();
 
-            if (logTimeData && iteration < 100)
-            {
+            if (logTimeData && iteration < 100) {
                 CommonUtils.LogDataToFile(timeLogFile, iteration++, stopwatch.Elapsed.TotalMilliseconds * 1000.0);
                 // print("Time for iteraton " + iteration + " is " + stopwatch.Elapsed.TotalMilliseconds * 1000.0 + " microseconds.");
                 // iteration++;
@@ -103,8 +97,7 @@ namespace Sim.Physics.Water.Statics
 
 
         // Cuts the voxels at the waterline. Results in less discontinutity in the submerged volume
-        public (Vector3, float) GetDetailedPointsUnderWaterPatch()
-        {
+        public (Vector3, float) GetDetailedPointsUnderWaterPatch() {
             float semiSubmergedVolume = 0.0f;
             float baseSurface = 4 * voxelRadius * voxelRadius;
             Vector3 sumOfPositions = Vector3.zero;
@@ -115,17 +108,14 @@ namespace Sim.Physics.Water.Statics
             List<Vector3> pointsAtSurface = new List<Vector3>();
             //List<Vector3> pointsAtSurfaceOverPatch = new List<Vector3>();
 
-            foreach (var point in globalVoxelPositions)
-            {
+            foreach (var point in globalVoxelPositions) {
                 float heightOfPoint = patch.GetPatchRelativeHeight(point);
-                if (heightOfPoint < 0.00001f - voxelRadius)
-                {
+                if (heightOfPoint < 0.00001f - voxelRadius) {
                     pointsFullySubmerged.Add(point);
                     sumOfPositions += point;
                     numberOfPoints++;
                 }
-                else if (heightOfPoint > -voxelRadius && heightOfPoint < voxelRadius)
-                {
+                else if (heightOfPoint > -voxelRadius && heightOfPoint < voxelRadius) {
                     pointsAtSurface.Add(point);
                     semiSubmergedVolume += baseSurface * (voxelRadius - heightOfPoint);
                     sumOfPositions += point;
@@ -136,8 +126,7 @@ namespace Sim.Physics.Water.Statics
             float fullySubmergedVolume = pointsFullySubmerged.Count * voxelVolume;
             float totalVolume = semiSubmergedVolume + fullySubmergedVolume;
 
-            if (logVolumeData && iteration < 3)
-            {
+            if (logVolumeData && iteration < 3) {
                 print("Logging data to file.");
                 CommonUtils.LogDataToFile(depthLogFile, -(transform.position.y - 0.5f), totalVolume);
             }
@@ -149,8 +138,7 @@ namespace Sim.Physics.Water.Statics
 
 
         /// Does not cutting of the voxels
-        public (Vector3, float) GetSimplePointsUnderWaterPatch()
-        {
+        public (Vector3, float) GetSimplePointsUnderWaterPatch() {
             // float semiSubmergedVolume = 0.0f; // never used (?)
             float baseSurface = 4 * voxelRadius * voxelRadius;
             Vector3 sumOfPositions = Vector3.zero;
@@ -158,11 +146,9 @@ namespace Sim.Physics.Water.Statics
 
             List<Vector3> pointsSubmerged = new List<Vector3>();
 
-            foreach (var point in globalVoxelPositions)
-            {
+            foreach (var point in globalVoxelPositions) {
                 float heightOfPoint = patch.GetPatchRelativeHeight(point);
-                if (heightOfPoint < 0.00001f)
-                {
+                if (heightOfPoint < 0.00001f) {
                     pointsSubmerged.Add(point);
                     sumOfPositions += point;
                     numberOfPoints++;
@@ -171,8 +157,7 @@ namespace Sim.Physics.Water.Statics
 
             float totalVolume = pointsSubmerged.Count * voxelVolume;
 
-            if (logVolumeData)
-            {
+            if (logVolumeData) {
                 print("Logging data to file.");
                 CommonUtils.LogDataToFile(depthLogFile, -(transform.position.y - 0.5f), totalVolume);
             }
@@ -183,25 +168,21 @@ namespace Sim.Physics.Water.Statics
         }
 
 
-        private void ApplyForce((Vector3 centerOfBuoyancy, float force) data)
-        {
+        private void ApplyForce((Vector3 centerOfBuoyancy, float force) data) {
             if (!logVolumeData) shipRigidbody.AddForceAtPosition(data.force * Vector3.up, data.centerOfBuoyancy);
             //UnityEngine.Debug.DrawRay(data.centerOfBuoyancy,data.force*Vector3.up, Color.red);
         }
 
 
-        private float CalculateForceFromVolumeOnly(float volume)
-        {
+        private float CalculateForceFromVolumeOnly(float volume) {
             return actualForce = Constants.waterDensity * volume * Constants.gravity;
         }
 
 
-        private void UpdateGlobalVoxelPosition()
-        {
+        private void UpdateGlobalVoxelPosition() {
             if (!transform.hasChanged) return;
             globalVoxelPositions.Clear();
-            foreach (Vector3 point in pointsInsideMesh)
-            {
+            foreach (Vector3 point in pointsInsideMesh) {
                 globalVoxelPositions.Add(transform.TransformPoint(point));
             }
             // Reset the hasChanged flag
@@ -209,15 +190,13 @@ namespace Sim.Physics.Water.Statics
         }
 
 
-        private Vector3ListWrapper LoadPoints()
-        {
+        private Vector3ListWrapper LoadPoints() {
             string json = File.ReadAllText(path + "localPointsData-" + transform.name + ".json");
             return JsonUtility.FromJson<Vector3ListWrapper>(json);
         }
 
 
-        private void ApplyHydrodynamicDampening()
-        {
+        private void ApplyHydrodynamicDampening() {
             //foreach (var point in pointsSubmerged)
             {
                 //Vector3 velocity = GetPointVelocity(point); // Implement this method based on your system
@@ -227,32 +206,26 @@ namespace Sim.Physics.Water.Statics
             }
         }
 
-        private float TestVolume((Vector3 centerOfBuoyancy, int numberOfPoints) data)
-        {
+        private float TestVolume((Vector3 centerOfBuoyancy, int numberOfPoints) data) {
             // Total volume submerged
             return data.numberOfPoints * voxelVolume;
         }
 
 
-        public (List<Vector3>, List<Vector3>, List<Vector3>) DevelopPointLists()
-        {
+        public (List<Vector3>, List<Vector3>, List<Vector3>) DevelopPointLists() {
             List<Vector3> pointsFullySubmerged = new List<Vector3>();
             List<Vector3> pointsAtSurfaceUnderPatch = new List<Vector3>();
             List<Vector3> pointsAtSurfaceOverPatch = new List<Vector3>();
 
-            foreach (var point in globalVoxelPositions)
-            {
+            foreach (var point in globalVoxelPositions) {
                 float heightOfPoint = patch.GetPatchRelativeHeight(point);
-                if (heightOfPoint < 0.00001f - voxelRadius)
-                {
+                if (heightOfPoint < 0.00001f - voxelRadius) {
                     pointsFullySubmerged.Add(point);
                 }
-                else if (heightOfPoint < 0.00001f && heightOfPoint > -voxelRadius)
-                {
+                else if (heightOfPoint < 0.00001f && heightOfPoint > -voxelRadius) {
                     pointsAtSurfaceUnderPatch.Add(point);
                 }
-                else if (heightOfPoint > 0.00001f && heightOfPoint < voxelRadius)
-                {
+                else if (heightOfPoint > 0.00001f && heightOfPoint < voxelRadius) {
                     pointsAtSurfaceOverPatch.Add(point);
                 }
             }
@@ -261,56 +234,47 @@ namespace Sim.Physics.Water.Statics
         }
 
 
-        private void InitializeLogs()
-        {
+        private void InitializeLogs() {
             depthLogFile = path + "VolumeData-" + transform.name + ".csv";
             timeLogFile = path + "TimeData-" + transform.name + ".csv";
 
-            if (!File.Exists(depthLogFile) && logVolumeData)
-            {
+            if (!File.Exists(depthLogFile) && logVolumeData) {
                 print("Beginning to log volume data");
                 CommonUtils.LogDataToFile(depthLogFile, "depth", "volume");
                 // Add a constant downward force
                 GetComponent<Rigidbody>().linearVelocity = new Vector3(0f, -0.1f, 0f);
             }
 
-            if (!File.Exists(timeLogFile) && logTimeData)
-            {
+            if (!File.Exists(timeLogFile) && logTimeData) {
                 print("Beginning to log time data");
                 CommonUtils.LogDataToFile(timeLogFile, "iteration_number", "time");
             }
         }
 
 
-        private void OnDrawGizmos()
-        {
+        private void OnDrawGizmos() {
             if (globalVoxelPositions.Count == 0) return;
-            if (drawVoxelPositionGizmo)
-            {
+            if (drawVoxelPositionGizmo) {
                 var (pointsFullySubmerged,
                     pointsAtSurfaceUnderPatch,
                     pointsAtSurfaceOverPatch) = DevelopPointLists();
 
                 Gizmos.color = Color.green;
-                foreach (Vector3 point in pointsFullySubmerged)
-                {
+                foreach (Vector3 point in pointsFullySubmerged) {
                     Gizmos.DrawSphere(point, 0.25f * voxelRadius);
                 }
                 Gizmos.color = Color.yellow;
-                foreach (Vector3 point in pointsAtSurfaceUnderPatch)
-                {
+                foreach (Vector3 point in pointsAtSurfaceUnderPatch) {
                     Gizmos.DrawSphere(point, 0.25f * voxelRadius);
                 }
                 Gizmos.color = Color.red;
-                foreach (Vector3 point in pointsAtSurfaceOverPatch)
-                {
+                foreach (Vector3 point in pointsAtSurfaceOverPatch) {
                     Gizmos.DrawSphere(point, 0.25f * voxelRadius);
                 }
             }
         }
 
-        private void OnDestroy()
-        {
+        private void OnDestroy() {
             patch.Dispose();
         }
     }

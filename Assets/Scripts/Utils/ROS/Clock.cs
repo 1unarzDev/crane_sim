@@ -1,14 +1,11 @@
 using System;
 using UnityEngine;
 
-namespace Unity.Robotics.Core
-{
-    public static class Clock
-    {
+namespace Sim.Utils.ROS {
+    public static class Clock {
         // Since UnityScaled is the default Unity Time mode, we'll use that for this project
         // None of the other time modes are fully validated and guaranteed to be without issues
-        public enum ClockMode
-        {
+        public enum ClockMode {
             // Time delta scaled by simulation speed to the start of the current frame, since the beginning of the game
             UnityScaled,
             // Real time delta to the exact moment this function is called, since beginning of the game
@@ -34,12 +31,9 @@ namespace Unity.Robotics.Core
 
         public static double TimeSinceFrameStart => Now - FrameStartTimeInSeconds;
 
-        public static double FrameStartTimeInSeconds
-        {
-            get
-            {
-                return Mode switch
-                {
+        public static double FrameStartTimeInSeconds {
+            get {
+                return Mode switch {
                     // This might be an approximation... needs testing.
                     ClockMode.UnityScaled => Time.timeAsDouble,
                     // ClockMode.UnityUnscaled => Time.unscaledTimeAsDouble,
@@ -49,12 +43,9 @@ namespace Unity.Robotics.Core
             }
         }
 
-        public static double NowTimeInSeconds
-        {
-            get
-            {
-                return Mode switch
-                {
+        public static double NowTimeInSeconds {
+            get {
+                return Mode switch {
                     ClockMode.UnityScaled => Time.timeAsDouble + UnityUnscaledTimeSinceFrameStart * Time.timeScale,
                     // ClockMode.UnityUnscaled => Time.realtimeSinceStartupAsDouble,
                     // ClockMode.UnixEpoch => SecondsSinceUnixEpoch,
@@ -64,12 +55,9 @@ namespace Unity.Robotics.Core
         }
 
         // NOTE: Precision loss vs. other time measurements due to no deltaTimeAsDouble interface
-        public static float DeltaTimeInSeconds
-        {
-            get
-            {
-                return Mode switch
-                {
+        public static float DeltaTimeInSeconds {
+            get {
+                return Mode switch {
                     ClockMode.UnityScaled => Time.deltaTime,
                     _ => Time.unscaledDeltaTime,
                 };
@@ -85,8 +73,7 @@ namespace Unity.Robotics.Core
 
         // WARNING: These functions could potentially mess up threaded access to this clock class.
         //          Would need to include some mutex locking to keep these calls thread-safe
-        public static double GetFrameTime(ClockMode temporaryMode)
-        {
+        public static double GetFrameTime(ClockMode temporaryMode) {
             var originalMode = Mode;
             Mode = temporaryMode;
             var t = FrameStartTimeInSeconds;
@@ -94,8 +81,7 @@ namespace Unity.Robotics.Core
             return t;
         }
 
-        public static double GetNowTime(ClockMode temporaryMode)
-        {
+        public static double GetNowTime(ClockMode temporaryMode) {
             var originalMode = Mode;
             Mode = temporaryMode;
             var t = NowTimeInSeconds;

@@ -3,10 +3,8 @@ using Unity.Collections;
 using UnityEngine;
 using Sim.Utils;
 
-namespace Sim.Physics.Processing
-{
-    public class Submersion : MonoBehaviour
-    {
+namespace Sim.Physics.Processing {
+    public class Submersion : MonoBehaviour {
         [ReadOnly]
         public Submerged submerged;
 
@@ -27,8 +25,7 @@ namespace Sim.Physics.Processing
         private float displacedVolume;
 
 
-        private void Start()
-        {
+        private void Start() {
             Vector3 gridOrigin = new Vector3(-patchSize / 2, 0, patchSize / 2);
             patch = new Patch(waterSurface, patchSize, patchResolution, gridOrigin);
             submerged = new Submerged(simplifiedMesh, debug: true); // set up submersion by providing the simplified hull mesh
@@ -36,8 +33,7 @@ namespace Sim.Physics.Processing
 
         }
 
-        private void FixedUpdate()
-        {
+        private void FixedUpdate() {
             patch.Update(transform); // updates the patch to follow the boat and queried water height
             submerged.Update(patch, transform);
 
@@ -48,25 +44,21 @@ namespace Sim.Physics.Processing
         }
 
 
-        private void DebugPatch()
-        {
+        private void DebugPatch() {
             int[] tris = patch.patchTriangles;
             Vector3[] verts = patch.patchVertices;
-            for (var i = 0; i < tris.Length; i += 3)
-            {
+            for (var i = 0; i < tris.Length; i += 3) {
                 Vector3[] tri = new Vector3[] { verts[tris[i]], verts[tris[i + 1]], verts[tris[i + 2]] };
                 CommonUtils.DebugDrawTriangle(tri, Color.red);
             }
         }
 
 
-        private void DebugSubmerged()
-        {
+        private void DebugSubmerged() {
             int[] tris = submerged.data.triangles;
             Vector3[] verts = submerged.data.vertices;
 
-            for (int i = 0; i < submerged.data.maxTriangleIndex - 2; i += 3)
-            {
+            for (int i = 0; i < submerged.data.maxTriangleIndex - 2; i += 3) {
                 Vector3[] tri = new Vector3[]
                 {
                 transform.TransformPoint(verts[tris[i]]),
@@ -78,8 +70,7 @@ namespace Sim.Physics.Processing
             }
         }
 
-        private void OnDestroy()
-        {
+        private void OnDestroy() {
             patch.Dispose();
         }
     }
