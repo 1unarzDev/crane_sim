@@ -8,6 +8,7 @@ namespace Sim.Physics.Water.Dynamics {
     public class Current : MonoBehaviour {
         [SerializeField] private WaterSurface waterSurface;
         [SerializeField] private bool debugCurrent = false;
+        [SerializeField] private float Cd = 1.0f;
         private Submerged submerged;
         private IPhysicsBody body;
 
@@ -45,7 +46,6 @@ namespace Sim.Physics.Water.Dynamics {
                 Vector3 waterVel = GetCurrentAtPoint(faceCenter);
                 Vector3 relVel = pointVel - waterVel;
 
-                float Cd = 1.0f;
                 float rho = Constants.waterDensity;
                 float faceArea = submerged.data.triangleAreas[i];
 
