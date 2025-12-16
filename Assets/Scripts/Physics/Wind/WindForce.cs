@@ -5,7 +5,7 @@ using Sim.Utils;
 
 namespace Sim.Physics.Wind {
     [RequireComponent(typeof(Buoyancy))]
-    [RequireComponent(typeof(KernerDynamics))]
+    [RequireComponent(typeof(GeneralDynamics))]
     public class WindForce : MonoBehaviour {
         public Wind wind;
         public Rigidbody rb;
@@ -20,7 +20,7 @@ namespace Sim.Physics.Wind {
         private int numTris;
         private Vector3 totalWindForce;
         private Buoyancy buoyancy;
-        private KernerDynamics kernerDynamics;
+        private GeneralDynamics dynamics;
 
 
         private void Start() {
@@ -30,7 +30,7 @@ namespace Sim.Physics.Wind {
             numTris = tris.Length / 3;
             windVector = new Vector3(-wind.speed * Mathf.Sin(wind.direction), 0, wind.speed * Mathf.Cos(wind.direction));
             buoyancy = GetComponent<Buoyancy>();
-            kernerDynamics = GetComponent<KernerDynamics>();
+            dynamics = GetComponent<GeneralDynamics>();
         }
 
         private void FixedUpdate() {

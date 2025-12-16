@@ -6,7 +6,7 @@ using Sim.Utils;
 
 namespace Sim.Physics.Water.Dynamics {
     [RequireComponent(typeof(Submersion))]
-    public class KernerDynamics : MonoBehaviour {
+    public class GeneralDynamics : MonoBehaviour {
 
         public bool viscousResistActive;
         public bool pressureDragActive;
