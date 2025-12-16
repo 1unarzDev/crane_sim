@@ -6,6 +6,7 @@ using System.Threading;
 using System.IO;
 using UnityEngine;
 using Sim.Utils;
+using Sim.Controllers;
 
 namespace Sim.Sensors.Nav {
     [Serializable]
@@ -26,6 +27,9 @@ namespace Sim.Sensors.Nav {
     public class MAVROSConnection : MonoBehaviour {
         [SerializeField] private Imu imu;
         [SerializeField] private int localPort = 9002;
+        [SerializeField] private OmniXController controller;
+        [SerializeField] private float pwmMin;
+        [SerializeField] private float pwmMax;
 
         private UdpClient socketReceive;
         private UdpClient socketSend;
@@ -65,7 +69,7 @@ namespace Sim.Sensors.Nav {
                 imu.body.angularVelocity.y * Mathf.Deg2Rad
             };
 
-            data.imu.accel_body = new float[] {0.0f, 0.0f, -Constants.gravity};
+            data.imu.accel_body = new float[] { 0.0f, 0.0f, -Constants.gravity };
 
             data.position = new float[] {
                 -imu.body.position.x,
@@ -84,6 +88,11 @@ namespace Sim.Sensors.Nav {
                 imu.body.linearVelocity.z,
                 imu.body.linearVelocity.y
             };
+        }
+
+        private float MapPWM(float pwm) {
+            pwm = Math.Clamp(pwm, pwmMin, pwmMax);
+            return controller.config.GetMinCommand() + (pwm - pwmMin) * (controller.config.GetMaxCommand() - controller.config.GetMinCommand()) / (pwmMax - pwmMin);
         }
 
         private void ReceiveDataLoop() {
@@ -105,9 +114,11 @@ namespace Sim.Sensors.Nav {
                         pwm[i] = reader.ReadUInt16();
 
                     // Debug.Log($"Received frame {frameCount}, magic {magic}");
-
-                    foreach (int value in pwm) Debug.Log(value);
-
+                    // Debug.Log(pwm[0] + " " + pwm[1] + " " + pwm[2] + " " + pwm[3]);
+                    controller.frontLeft.SetCommand(MapPWM(pwm[1]));
+                    controller.frontRight.SetCommand(MapPWM(pwm[2]));
+                    controller.rearRight.SetCommand(MapPWM(pwm[3]));
+                    controller.rearLeft.SetCommand(MapPWM(pwm[0]));
                 }
                 catch (Exception ex) {
                     Debug.LogWarning(ex);

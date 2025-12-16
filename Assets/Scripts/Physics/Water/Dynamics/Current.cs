@@ -47,7 +47,7 @@ namespace Sim.Physics.Water.Dynamics {
                 float faceArea = submerged.data.triangleAreas[i];
 
                 Vector3 force = -0.5f * rho * Cd * faceArea * relVel.magnitude * relVel;
-                force.y = 0;
+                force.y = 0.0f;
 
                 body.AddForceAtPosition(force, faceCenter);
 

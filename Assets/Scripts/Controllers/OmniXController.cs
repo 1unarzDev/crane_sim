@@ -5,10 +5,10 @@ using UnityEngine.InputSystem;
 namespace Sim.Controllers {
     public class OmniXController : MonoBehaviour, IControllerBase {
         [SerializeField] private InputActionReference linearAction, angularAction;
-        [SerializeField] private Thruster frontLeft, frontRight, rearLeft, rearRight;
-        [SerializeField] private ThrusterConfig config; // Assumes all thrusters have this configuration
         private Vector2 linearInput;
         private float angularInput;
+        public ThrusterConfig config; // Assumes all thrusters have this configuration
+        public Thruster frontLeft, frontRight, rearLeft, rearRight;
 
         private void OnEnable() {
             linearAction.action.performed += OnLinearPerformed;
