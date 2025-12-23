@@ -112,7 +112,7 @@
         <xs:attribute default="Unity.AppUI.Core.Optional`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]" name="tooltip-delay-ms" type="xs:string" use="optional" />
         <xs:attribute default="M" name="size" type="appui:DateField_size_Type" use="optional" />
         <xs:attribute default="false" name="invalid" type="xs:boolean" use="optional" />
-        <xs:attribute default="2025-10-17" name="value" type="xs:string" use="optional" />
+        <xs:attribute default="2025-12-22" name="value" type="xs:string" use="optional" />
         <xs:attribute default="yyyy-MM-dd" name="format-string" type="xs:string" use="optional" />
         <xs:attribute default="" name="content-container" type="xs:string" use="optional" />
         <xs:attribute default="" name="class" type="xs:string" use="optional" />
@@ -452,7 +452,7 @@
         <xs:attribute default="Unity.AppUI.Core.Optional`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]" name="tooltip-delay-ms" type="xs:string" use="optional" />
         <xs:attribute default="Days" name="display-mode" type="appui:DateRangePicker_display-mode_Type" use="optional" />
         <xs:attribute default="Sunday" name="first-day-of-week" type="appui:DateRangePicker_first-day-of-week_Type" use="optional" />
-        <xs:attribute default="2025-10-17,2025-10-18" name="value" type="xs:string" use="optional" />
+        <xs:attribute default="2025-12-22,2025-12-23" name="value" type="xs:string" use="optional" />
         <xs:attribute default="" name="content-container" type="xs:string" use="optional" />
         <xs:attribute default="" name="class" type="xs:string" use="optional" />
         <xs:attribute default="" name="style" type="xs:string" use="optional" />
@@ -3230,7 +3230,7 @@
         <xs:attribute default="Unity.AppUI.Core.Optional`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]" name="tooltip-delay-ms" type="xs:string" use="optional" />
         <xs:attribute default="Days" name="display-mode" type="appui:DatePicker_display-mode_Type" use="optional" />
         <xs:attribute default="Sunday" name="first-day-of-week" type="appui:DatePicker_first-day-of-week_Type" use="optional" />
-        <xs:attribute default="2025-10-17" name="value" type="xs:string" use="optional" />
+        <xs:attribute default="2025-12-22" name="value" type="xs:string" use="optional" />
         <xs:attribute default="" name="content-container" type="xs:string" use="optional" />
         <xs:attribute default="" name="class" type="xs:string" use="optional" />
         <xs:attribute default="" name="style" type="xs:string" use="optional" />
@@ -4498,7 +4498,7 @@
         <xs:attribute default="Unity.AppUI.Core.Optional`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]" name="tooltip-delay-ms" type="xs:string" use="optional" />
         <xs:attribute default="M" name="size" type="appui:DateRangeField_size_Type" use="optional" />
         <xs:attribute default="false" name="invalid" type="xs:boolean" use="optional" />
-        <xs:attribute default="2025-10-17,2025-10-18" name="value" type="xs:string" use="optional" />
+        <xs:attribute default="2025-12-22,2025-12-23" name="value" type="xs:string" use="optional" />
         <xs:attribute default="yyyy-MM-dd" name="format-string" type="xs:string" use="optional" />
         <xs:attribute default="" name="content-container" type="xs:string" use="optional" />
         <xs:attribute default="" name="class" type="xs:string" use="optional" />
