@@ -26,7 +26,7 @@ namespace Sim.Sensors.Vision {
             sensorCamera = GetComponent<Camera>();
             sensorCamera.targetTexture = rgbRenderTexture;
 
-            publisher.Initialize(topicName, frameId, CreateMessage, Hz);
+            publisher.Initialize(topicName, frameId, CreateMessage, Hz, true);
         }
 
         public ImageMsg CreateMessage() {

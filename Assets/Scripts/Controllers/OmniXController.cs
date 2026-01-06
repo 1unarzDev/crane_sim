@@ -9,6 +9,7 @@ namespace Sim.Controllers {
         private float angularInput;
         public ThrusterConfig config; // Assumes all thrusters have this configuration
         public Thruster frontLeft, frontRight, rearLeft, rearRight;
+        public bool movementOverride = false;
 
         private void OnEnable() {
             linearAction.action.performed += OnLinearPerformed;
@@ -33,21 +34,25 @@ namespace Sim.Controllers {
         }
 
         private void OnLinearPerformed(InputAction.CallbackContext ctx) {
+            movementOverride = true;
             linearInput = ctx.ReadValue<Vector2>();
             Move();
         }
 
         private void OnLinearCanceled(InputAction.CallbackContext ctx) {
+            movementOverride = false;
             linearInput = Vector2.zero;
             Move();
         }
 
         private void OnAngularPerformed(InputAction.CallbackContext ctx) {
+            movementOverride = true;
             angularInput = ctx.ReadValue<float>();
             Move();
         }
 
         private void OnAngularCanceled(InputAction.CallbackContext ctx) {
+            movementOverride = false;
             angularInput = 0;
             Move();
         }

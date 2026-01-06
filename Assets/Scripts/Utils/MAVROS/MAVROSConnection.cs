@@ -115,10 +115,13 @@ namespace Sim.Sensors.Nav {
 
                     // Debug.Log($"Received frame {frameCount}, magic {magic}");
                     // Debug.Log(pwm[0] + " " + pwm[1] + " " + pwm[2] + " " + pwm[3]);
-                    controller.frontLeft.SetCommand(MapPWM(pwm[1]));
-                    controller.frontRight.SetCommand(MapPWM(pwm[2]));
-                    controller.rearRight.SetCommand(MapPWM(pwm[3]));
-                    controller.rearLeft.SetCommand(MapPWM(pwm[0]));
+                    // TODO: Create a customizable mapping system to match various controllers with MAVROS expected outputs
+                    if (!controller.movementOverride) {
+                        controller.frontLeft.SetCommand(MapPWM(pwm[1]));
+                        controller.frontRight.SetCommand(MapPWM(pwm[2]));
+                        controller.rearRight.SetCommand(MapPWM(pwm[3]));
+                        controller.rearLeft.SetCommand(MapPWM(pwm[0]));
+                    }
                 }
                 catch (Exception ex) {
                     Debug.LogWarning(ex);

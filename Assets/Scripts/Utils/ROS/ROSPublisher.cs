@@ -10,6 +10,7 @@ namespace Sim.Utils.ROS {
         public string topicName { get; set; }
         public string frameId { get; set; }
         public float Hz;
+        public bool manualPublish;
 
         private ROSConnection ros;
         private float time;
@@ -24,11 +25,12 @@ namespace Sim.Utils.ROS {
 
         private void OnEnable() { hideFlags = HideFlags.HideInInspector; }
 
-        public void Initialize<T>(string topicName, string frameId, Func<T> createMessage, float Hz=10f)
+        public void Initialize<T>(string topicName, string frameId, Func<T> createMessage, float Hz=10f, bool manualPublish=false)
         where T : Unity.Robotics.ROSTCPConnector.MessageGeneration.Message {
             this.topicName = topicName;
             this.frameId = frameId;
             this.Hz = Hz;
+            this.manualPublish = manualPublish;
 
             ros = ROSConnection.GetOrCreateInstance();
             ros.RegisterPublisher<T>(topicName);
@@ -48,6 +50,7 @@ namespace Sim.Utils.ROS {
         }
 
         private void FixedUpdate() {
+            if (manualPublish) return;
             if (createMessage == null) return;
 
             time += Time.fixedDeltaTime;

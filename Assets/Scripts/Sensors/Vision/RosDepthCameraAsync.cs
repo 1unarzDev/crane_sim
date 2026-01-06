@@ -37,7 +37,7 @@ namespace Sim.Sensors.Vision {
             depthBakePass.depthTexture = depthRenderTexture;
             customPassVolume.customPasses.Add(depthBakePass);
 
-            publisher.Initialize(topicName, frameId, CreateMessage, Hz);
+            publisher.Initialize(topicName, frameId, CreateMessage, Hz, true);
         }
 
         public ImageMsg CreateMessage() {
