@@ -79,10 +79,16 @@ namespace Sim.Controllers {
                 float cX = linear.x * config.GetMaxCommand();
                 float cY = linear.y * config.GetMaxCommand();
 
-                frontLeft.SetCommand(cX - cY);
-                frontRight.SetCommand(-cX - cY);
-                rearLeft.SetCommand(cX + cY);
-                rearRight.SetCommand(-cX + cY);
+                frontLeft.SetCommand(-cX - cY);
+                frontRight.SetCommand(cX - cY);
+                rearLeft.SetCommand(-cX + cY);
+                rearRight.SetCommand(cX + cY);
+
+                // Outward pointing thrusters
+                // frontLeft.SetCommand(cX - cY);
+                // frontRight.SetCommand(-cX - cY);
+                // rearLeft.SetCommand(cX + cY);
+                // rearRight.SetCommand(-cX + cY);
             }
         }
     }

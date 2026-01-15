@@ -86,7 +86,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ee15896ec7ed462a5a7af6e49825a557,
         type: 3}
       propertyPath: m_Name
-      value: GreenPoleBuoy0
+      value: GreenPoleBuoyPrefab
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
